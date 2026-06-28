@@ -4,6 +4,9 @@ const connection = require('../connection');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+var auth = require('../services/authentication')
+var checkRole = require('../services/checkRole')
+
 
 router.post('/signup', (req, res) => {
     let user = req.body;
@@ -88,6 +91,80 @@ router.post('/forgot-password', (req, res) => {
                     }
                 });
                 return res.status(200).json({ message: "Password sent successfully to your email." });
+            }
+        }
+        else {
+            return res.status(500).json(err);
+        }
+    })
+})
+
+router.get('/get',auth.authenticateToken, (req, res) => {
+    var query = "select id, name,email,contactNumber,status from users where role= 'user'";
+    connection.query(query, (err, result) => {
+        if (!err) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(500).json(err)
+        }
+    })
+})
+
+router.patch('/update',auth.authenticateToken, (req, res) => {
+    let user = req.body;
+
+    // First get current status
+    var selectQuery = "SELECT status FROM users WHERE id = ?";
+    connection.query(selectQuery, [user.id], (err, result) => {
+        if (!err) {
+            if (result.length == 0) {
+                return res.status(404).json({ message: "User id does not exist" });
+            }
+
+            // Toggle status
+            const currentStatus = result[0].status;
+            const newStatus = currentStatus === 'true' ? 'false' : 'true';
+
+            var updateQuery = "UPDATE users SET status = ? WHERE id = ?";
+            connection.query(updateQuery, [newStatus, user.id], (err, result) => {
+                if (!err) {
+                    return res.status(200).json({ message: "User Updated Successfully" });
+                } else {
+                    return res.status(500).json(err);
+                }
+            });
+        } else {
+            return res.status(500).json(err);
+        }
+    });
+});
+
+router.get('/checkToken',auth.authenticateToken,(req,res)=>{
+    return res.status(200).json({message:"true"})
+})
+
+router.post('/change-password', auth.authenticateToken, (req, res) => {
+    const user = req.body;
+    const email = res.locals.user.email;
+    var query = "select * from users where email=? and password=?";
+    connection.query(query, [email, user.oldPassword], (err, results) => {
+        if (!err) {
+            if (results.length <= 0) {
+                return res.status(400).json({ message: "Incorrect Old Password" });
+            }
+            else if (results[0].password == user.oldPassword) {
+                query = "update users set password=? where email=?";
+                connection.query(query, [user.newPassword, email], (err, results) => {
+                    if (!err) {
+                        return res.status(200).json({ message: "Password Updated Successfully" });
+                    }
+                    else {
+                        return res.status(500).json(err);
+                    }
+                })
+            }
+            else {
+                return res.status(400).json({ message: "Something went wrong. Please try again later" });
             }
         }
         else {
