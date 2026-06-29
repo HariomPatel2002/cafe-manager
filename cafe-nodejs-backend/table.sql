@@ -16,4 +16,14 @@ create table category(
     id int not NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     PRIMARY KEY(id)
-)
+);
+
+create table products (
+    id int NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    categoryId integer NOT NULL,
+    description VARCHAR(255),
+    price integer,
+    status VARCHAR(20),
+    PRIMARY key(id)
+);
