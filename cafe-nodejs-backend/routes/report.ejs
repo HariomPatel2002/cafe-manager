@@ -1,0 +1,55 @@
+<html>
+<head>
+    <style>
+        table {
+            font-family: Arial, sans-serif; /* ✅ fixed "font-size: :aerial" */
+            border: 1px solid black;
+            text-align: center;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h3 style="text-align: center;">Cafe Management System</h3>
+    <table>
+        <tr>
+            <th>Name : <%= name %></th>
+            <th>Email : <%= email %></th>
+        </tr>
+        <tr>
+            <th>Contact Number : <%= contactNumber %></th>
+            <th>Payment Method : <%= paymentMethod %></th>
+        </tr>
+    </table>
+
+    <h3>Product Details</h3>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Sub Total</th>
+        </tr>
+        <% if(productDetails && productDetails.length > 0){ %> <!-- ✅ added null check -->
+            <% productDetails.forEach(product => { %>
+            <tr>
+                <td><%= product.name %></td>
+                <td><%= product.categoryName %></td>
+                <td><%= product.quantity %></td>
+                <td><%= product.price %></td>
+                <td><%= product.subTotal %></td>
+            </tr>
+            <% }) %> <!-- ✅ fixed missing closing }) -->
+        <% } %>
+    </table>
+
+    <h3>Total Amount : <%= totalAmount %></h3>
+    <h3>Thank you for visiting, Please visit again</h3> <!-- ✅ fixed "visting" typo -->
+</body>
+</html>
