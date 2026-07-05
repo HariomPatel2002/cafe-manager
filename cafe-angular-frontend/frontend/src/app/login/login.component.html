@@ -1,0 +1,31 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row fxLayout="row">
+        <span class="title-center">Login</span>
+    </mat-toolbar-row>
+</mat-toolbar>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="loginForm">
+        <div fxFlex fxLayout="column">
+            <mat-form-field appearance="fill" fxFlex>
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" required>
+                <mat-error *ngIf="loginForm.controls.email.touched && loginForm.controls.email.invalid">
+                    <span *ngIf="loginForm.controls.email.errors?.required">This field is mandatory</span>
+                    <span *ngIf="loginForm.controls.email.errors?.pattern">Email is invalid</span>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill" fxFlex>
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" type="password" required>
+                <mat-error *ngIf="loginForm.controls.password.touched && loginForm.controls.password.invalid">
+                    <span *ngIf="loginForm.controls.password.errors?.required">This field is mandatory</span>
+                </mat-error>
+            </mat-form-field>
+            <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px" style="margin-top: 15px;">
+                <button mat-flat-button color="primary" [disabled]="!loginForm.valid"
+                    (click)="handleSubmit()">Submit</button>
+                <button mat-flat-button color="primary" (click)="dialogRef.close()">Close</button>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
